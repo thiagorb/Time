@@ -1,0 +1,5 @@
+*.suo
+Time/bin
+Time/dist
+Time/obj
+Time/*.js
