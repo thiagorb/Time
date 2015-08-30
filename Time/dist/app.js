@@ -1,1 +1,0 @@
-window.onload=function(){var a=new Time.GameView(document.getElementById("canvas"));a.start()};

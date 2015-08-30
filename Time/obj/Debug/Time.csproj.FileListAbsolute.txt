@@ -1,6 +1,0 @@
-c:\users\thiago\Desktop\js13k2015\Time\Time\obj\Debug\Time.csprojResolveAssemblyReference.cache
-c:\users\thiago\Desktop\js13k2015\Time\Time\bin\Time.dll.config
-c:\users\thiago\Desktop\js13k2015\Time\Time\bin\Time.dll
-c:\users\thiago\Desktop\js13k2015\Time\Time\bin\Time.pdb
-c:\users\thiago\Desktop\js13k2015\Time\Time\obj\Debug\Time.dll
-c:\users\thiago\Desktop\js13k2015\Time\Time\obj\Debug\Time.pdb

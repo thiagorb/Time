@@ -2,4 +2,7 @@
 Time/bin
 Time/dist
 Time/obj
+Time/dist.tar.gz
 Time/*.js
+Time/*.js.map
+Time/*.user
