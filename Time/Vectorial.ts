@@ -1,35 +1,70 @@
 ﻿module Vectorial {
+    
     export class Matrix {
-        private data: Array<Array<number>>;
+        public length: number;
 
-        constructor(data: Array<Array<number>>) {
-            this.data = data;
+        constructor(lines: number, columns?: number) {
+            this.length = lines;
+            for (var i = 0; i < lines; i++) {
+                this[i] = new Array(columns || lines);
+            }
         }
 
-        copy() {
-            var r = new Array(this.data.length);
-            for (var i = 0; i < this.data.length; i++) {
-                r[i] = new Array(this.data[i].length);
-                for (var j = 0; j < this.data[i].length; j++) {
-                    r[i][j] = this.data[i][j];
+        static copy(m: Matrix): Matrix {
+            var copy = new Matrix(m.length, m[0].length);
+            copy.length = m.length;
+            for (var i = 0; i < m.length; i++) {
+                copy[i] = new Array(m[i].length);
+                for (var j = 0; j < m[i].length; j++) {
+                    copy[i][j] = m[i][j];
                 }
             }
-            return new Matrix(r);
+            return copy;
         }
 
-        multiply(other: Matrix, result: Matrix, n?: number, m?: number, p?: number) {
-            n = n || this.data.length;
-            m = m || this.data.length;
-            p = p || other.data[0].length;
+        static multiply(a: Matrix, b: Matrix, result?: Matrix, n?: number, m?: number, p?: number): Matrix {
+            n = n || a.length;
+            m = m || b.length;
+            p = p || b[0].length;
+            result = result || new Matrix(n, p);
             for (var i = 0; i < n; i++) {
                 for (var j = 0; j < p; j++) {
-                    result.data[i][j] = 0;
+                    result[i][j] = 0;
                     for (var k = 0; k < m; k++) {
-                        result.data[i][j] += this.data[i][k] * other.data[k][j];
+                        result[i][j] += a[i][k] * b[k][j];
                     }
                 }
             }
             return result;
+        }
+
+        static translate(x: number, y: number): Matrix {
+            return [
+                [1, 0, 0],
+                [0, 1, 0],
+                [x, y, 1]
+            ];
+        }
+
+        static rotate(delta: number): Matrix {
+            var sin = Math.sin(delta);
+            var cos = Math.cos(delta);
+            return [
+                [cos, -sin, 0],
+                [sin, cos, 0],
+                [0, 0, 1]
+            ];
+        }
+
+        static identity(n: number): Matrix {
+            var m = new Matrix(n);
+            for (var i = 0; i < n; i++) {
+                for (var j = 0; j < n; j++) {
+                    m[i][j] = 0;
+                }
+                m[i][i] = 1;
+            }
+            return m;
         }
     }
 }

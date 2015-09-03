@@ -49,7 +49,7 @@
     export class Polygon {
         vertices: Array<Array<number>>;
 
-        constructor(vertices: Array<Array<number>>) {
+        constructor(vertices: Vectorial.Matrix) {
             this.vertices = [];
             for (var i = 0; i < vertices.length; i++) {
                 this.vertices.push([vertices[i][0], vertices[i][1], 1]);

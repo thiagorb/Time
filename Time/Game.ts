@@ -1,7 +1,4 @@
 ﻿module Game {
-    var FPS = 60;
-    var SPS = 90;
-
     export interface Steppable {
         step();
     }
@@ -13,19 +10,25 @@
     export class GameView {
         renderToken: number;
         stepToken: number;
+        countFPSToken: number;
         stepObjects: Array<Steppable> = new Array();
         renderObjects: Array<Renderable> = new Array();
         canvas: HTMLCanvasElement;
         private keyboardController: KeyboardController;
+        private countFPS = 0;
+        private fps = 0;
 
         constructor(canvas: HTMLCanvasElement) {
-            window.addEventListener("resize", () => {
-                canvas.width = canvas.clientWidth;
-                canvas.height = canvas.clientHeight;
-            });
+            window.addEventListener("resize", () => this.resizeCanvas());
             this.canvas = canvas;
+            this.resizeCanvas();
             this.keyboardController = new KeyboardController();
             this.addStepObject(this.keyboardController);
+            this.addRenderObject({
+                render: (ctx: CanvasRenderingContext2D) => {
+                    ctx.fillText(this.fps.toString(), 10, 10);
+                }
+            });
         }
 
         addStepObject(o: Steppable) {
@@ -42,52 +45,60 @@
 
         render() {
             var g = this.canvas.getContext("2d");
+            g.setTransform(1, 0, 0, 1, 0, 0);
             g.clearRect(0, 0, this.canvas.width, this.canvas.height);
             this.renderObjects.forEach(o => o.render(g));
+            this.countFPS++;
+            window.requestAnimationFrame(() => this.render());
         }
 
-        start() {
-            this.renderToken = setInterval(() => this.render(), 1000 / FPS);
-            this.stepToken = setInterval(() => this.step(), 1000 / SPS);
+        start(sps) {
+            this.renderToken = window.requestAnimationFrame(() => this.render());
+            this.stepToken = setInterval(() => this.step(), 1000 / sps);
+            this.countFPSToken = setInterval(() => { this.fps = this.countFPS; this.countFPS = 0 }, 1000);
         }
 
         stop() {
             clearInterval(this.renderToken);
             clearInterval(this.stepToken);
+            clearInterval(this.countFPSToken);
         }
 
         addKeyListener(keyCode: number, callback: Function) {
             this.keyboardController.addListener(keyCode, callback);
         }
+
+        resizeCanvas() {
+            this.canvas.width = this.canvas.clientWidth;
+            this.canvas.height = this.canvas.clientHeight;
+        }
     }
 
     class KeyboardController implements Steppable {
-        pressedKeys: Map<number, boolean> = new Map<number, boolean>();
-        keyListeners: Map<number, Array<Function>> = new Map<number, Array<Function>>();
+        pressedKeys: {} = {};
+        keyListeners: {} = {};
 
         constructor() {
             document.addEventListener("keydown", ev => {
-                this.pressedKeys.set(ev.keyCode, true);
+                this.pressedKeys[ev.keyCode] = true;
             });
             document.addEventListener("keyup", ev => {
-                this.pressedKeys.set(ev.keyCode, false);
+                this.pressedKeys[ev.keyCode] = false;
             });
         }
 
         step() {
-            this.keyListeners.forEach((callback, keyCode) => {
-                if (this.pressedKeys.get(keyCode))
-                    this.keyListeners.get(keyCode).forEach(callback => callback());
-            });
+            for (var keyCode in this.keyListeners) {
+                if (this.pressedKeys[keyCode])
+                    this.keyListeners[keyCode].forEach(callback => callback());
+            }
         }
 
         addListener(keyCode: number, callback: Function) {
-            var listeners: Array<Function>;
-            if (this.keyListeners.has(keyCode)) {
-                listeners = this.keyListeners.get(keyCode);
-            } else {
+            var listeners: Array<Function> = this.keyListeners[keyCode];
+            if (!listeners) {
                 listeners = [];
-                this.keyListeners.set(keyCode, listeners);
+                this.keyListeners[keyCode] = listeners;
             }
             listeners.push(callback);
         }

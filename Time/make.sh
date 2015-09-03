@@ -1,7 +1,10 @@
 #!/bin/sh
+SCRIPTPATH=$( sed -r -e "s/\\\/\//g" <<< ${BASH_SOURCE[0]} )
+PROJECTDIR=$(dirname $SCRIPTPATH)
 
-(
-cd $( dirname "${BASH_SOURCE[0]}" )
+cd $PROJECTDIR
+
+if [ ! -e dist ]; then mkdir dist; fi
 
 for js in $(ls -1 *.js)
 do
@@ -20,4 +23,3 @@ done
 
 tar -czf dist.tar.gz dist
 echo dist.tar.gz created. Size: `du -b dist.tar.gz | cut -f1` bytes
-)
