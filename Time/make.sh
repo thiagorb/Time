@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 SCRIPTPATH=$( sed -r -e "s/\\\/\//g" <<< ${BASH_SOURCE[0]} )
 PROJECTDIR=$(dirname $SCRIPTPATH)
 
@@ -11,9 +11,9 @@ do
     yui $js > dist/$js
 done
 
-for css in $(ls -1 *.css)
+for less in $(ls -1 *.less)
 do
-    yui $css > dist/$css
+    lessc $less | yui --type css > dist/`sed -r "s/.less$/.css/" <<< "$less"`
 done
 
 for html in $(ls -1 *.html)

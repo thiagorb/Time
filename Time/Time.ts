@@ -72,7 +72,7 @@
                 [-20, 20],
             ], "green");
         }
-    } 
+    }
 
     class Obstacle extends RenderablePolygon {
         private calculatePosition: () => Array<number>;
