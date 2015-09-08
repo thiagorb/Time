@@ -30,7 +30,7 @@ echo dist.tar.gz created. Size: `du -b dist.tar.gz | cut -f1` bytes
 
 if [ "$1" == "--deploy" ]
 then
-    if [ "$(git status --porcelain)" ]
+    if [ "$(git status --porcelain)" ] && [ "$2" != "--force" ]
     then
         echo There are uncommited changes, not deploying.
         exit
