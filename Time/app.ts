@@ -10,6 +10,10 @@
     }, 250);
 }
 
+var starsHTML = [0, 0, 0, 0, 0].map(function () {
+    return"<svg viewBox='0 0 94 90'><polygon points='47,0 76,90 0,34 94,34 17,90'></polygon></svg>";
+}).join("");
+
 window.onload = () => {
     var gameView = new Time.GameView(<HTMLCanvasElement>document.getElementById("canvas"));
     gameView.start();
@@ -23,14 +27,20 @@ window.onload = () => {
     });
     
     var levelsTableBody = <HTMLTableSectionElement>document.getElementById("levels-list").children[0];
-    var i = 0;
+    
     Time.getLevels().map(function (level) {
-        i++;
-        var tds = [level.name, [0, 1, 2, 3, 4].map(star).join(""), "---"].map(function (value) {
-            return "<td class='stars star-" + (i % 6) + "'>" + value + "</td>";
-        }).join("");
-        return "<tr data-id='" + level.id + "'>" + tds + "</tr>";
-    }).forEach(function (tr: string) { levelsTableBody.innerHTML += tr });
+        var storageData = getLevelStorageData(level.id);
+        
+        return createTree([
+            "tr",
+            { "data-id": level.id },
+            [
+                ["td", {}, level.name],
+                ["td", { "class": "stars star-" + storageData.stars }, starsHTML],
+                ["td", {}, formatTime(storageData.time)]
+            ]
+        ]);
+    }).forEach(function (tr: Node) { levelsTableBody.appendChild(tr) });
     
     levelsTableBody.addEventListener("click", function (ev: MouseEvent) {
         var tr = ancestor(<HTMLElement>ev.target, "TR");
@@ -46,8 +56,19 @@ window.onload = () => {
     })
 };
 
-function star(stars) {
-    return "<svg viewBox='0 0 94 90'><polygon points='47,0 76,90 0,34 94,34 17,90'></polygon></svg>";
+function createTree(data: Array<any>) : Node {
+    var element = document.createElement(data[0]);
+    if (data[1]) {
+        for (var key in data[1]) {
+            element.setAttribute(key, data[1][key]);
+        }
+    }
+    if (typeof(data[2]) == "string") {
+        element.innerHTML = data[2];
+    } else if (data[2]) {
+        data[2].forEach(function (child) { element.appendChild(createTree(child)) });
+    }
+    return element;
 }
 
 function ancestor(element: HTMLElement, tagName: string) {
@@ -55,4 +76,34 @@ function ancestor(element: HTMLElement, tagName: string) {
         element = element.parentElement;
     }
     return element;
+}
+
+interface LevelStorageData {
+    time: number;
+    stars: number;
+}
+
+function registerScore(levelId: number, time: number, stars: number) {
+    var currentData = getLevelStorageData(levelId);
+    if (currentData.time < time) return;
+    
+    localStorage.setItem("score-level-" + levelId, JSON.stringify({
+        time: time,
+        stars: stars
+    }));
+    var levelTr = <HTMLTableRowElement>document.querySelector("tr[data-id=" + levelId + "]");
+    var starsTd = <HTMLTableDataCellElement>levelTr.children[1];
+    starsTd.className = "stars star-" + stars;
+    
+    var timeTd = <HTMLTableDataCellElement>levelTr.children[2];
+    timeTd.innerHTML = formatTime(time);
+}
+
+function formatTime(time: number) {
+    if (time == Infinity) return "---";
+    return time.toFixed(2) + "s";
+}
+
+function getLevelStorageData(levelId: number) : LevelStorageData {
+    return JSON.parse(localStorage.getItem("score-level-" + levelId)) || { stars: null, time: Infinity };
 }

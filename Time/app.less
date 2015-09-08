@@ -7,11 +7,14 @@ body {
     -ms-user-select: none;
 }
 
+@default-font-size: 3vmin;
+@default-line-height: 4vmin;
 * {
     border: 0;
     color: white;
     font-weight: bolder;
-    font-size: 3vmin;
+    font-size: @default-font-size;
+    line-height: @default-line-height;
 }
 
 canvas {
@@ -32,8 +35,11 @@ canvas {
     transition: 0.5s opacity;
 }
 
-@dialog-width: 70vmin;
-@dialog-height: 50vmin;
+@dialog-width: 80vmin;
+@dialog-height: 60vmin;
+@dialog-padding: 4vmin;
+@dialog-content-width: @dialog-width - 2 * @dialog-padding;
+@dialog-content-height: @dialog-height - 2 * @dialog-padding;
 
 #dialog {
     width: @dialog-width;
@@ -46,7 +52,7 @@ canvas {
     background: linear-gradient(#666, #444);
     box-sizing: border-box;
     border-radius: 5vmin;
-    padding: 4vmin;
+    padding: @dialog-padding;
     box-shadow: 0 0 3vmin darkslateblue;
     text-align: center;
     transition: 0.5s opacity;
@@ -60,22 +66,15 @@ canvas {
     }
 }
 
-#title {
-    margin: 9vmin 0 5vmin 0;
-    font-size: 9vmin;
-    width: 100%;
-    text-shadow: 0 0 1.25vmin black; 
-}
-
-#level-selection {
-    text-shadow: 0 0 1.25vmin black; 
-}
-
+@button-height: 7vmin;
+@button-border: 0.5vmin;
 button {
     background: #6f0;
-    padding: 2vmin;
+    padding: 0 2vmin;
+    height: @button-height;
+    line-height: @button-height - 2 * @button-border;
     border-radius: 2vmin;
-    border: 0.5vmin solid white;
+    border: @button-border solid white;
     cursor: pointer;
     
     &:hover {
@@ -85,10 +84,29 @@ button {
     &:focus {outline:0!important;}
 }
 
+@title-height: 10vmin;
+@title-margin-bottom: 5vmin;
+#title {
+    margin-bottom: @title-margin-bottom;
+    line-height: @title-height;
+    font-size: 9vmin;
+    width: 100%;
+    text-shadow: 0 0 1.25vmin black; 
+}
+
+#menu {
+    margin: (@dialog-content-height - (@title-height + @title-margin-bottom + @button-height)) / 2 0;
+}
+
+#level-selection {
+    text-shadow: 0 0 1.25vmin black; 
+}
+
+@levels-list-margin-top: 1vmin;
 #levels-list {
     overflow-y: scroll;
-    max-height: 38vmin;
-    margin-top: 1vmin;
+    max-height: @dialog-content-height - @default-line-height - @levels-list-margin-top;
+    margin-top: @levels-list-margin-top;
     display: block;
 
     &::-webkit-scrollbar {

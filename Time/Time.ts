@@ -188,12 +188,12 @@
             this.obstacles = level.obstacles;
         }
 
-        public static getLevel(id: number): Level {
-            if (id < 10) id = 0;
+        public static getLevel(levelId: number): Level {
+            var id = levelId < 10? 0: levelId;
             switch (id) {
                 case 0:
                     return {
-                        id: id,
+                        id: levelId,
                         name: "Intro",
                         viewSize: [500, 400],
                         roomSize: [1000, 400],
