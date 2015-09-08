@@ -2,6 +2,9 @@ body {
     font-family: sans-serif;
     margin: 0;
     position: relative;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
 }
 
 * {
@@ -26,6 +29,7 @@ canvas {
     position: absolute;
     top: 0;
     background-color: rgba(0, 0, 0, 0.25);
+    transition: 0.5s opacity;
 }
 
 @dialog-width: 70vmin;
@@ -45,10 +49,10 @@ canvas {
     padding: 4vmin;
     box-shadow: 0 0 3vmin darkslateblue;
     text-align: center;
+    transition: 0.5s opacity;
     
     >div {
         display: none;
-        transition: 0.5s opacity;
         
         &.active {
             display: block;
@@ -60,6 +64,10 @@ canvas {
     margin: 9vmin 0 5vmin 0;
     font-size: 9vmin;
     width: 100%;
+    text-shadow: 0 0 1.25vmin black; 
+}
+
+#level-selection {
     text-shadow: 0 0 1.25vmin black; 
 }
 
@@ -75,4 +83,91 @@ button {
     }
     
     &:focus {outline:0!important;}
+}
+
+#levels-list {
+    overflow-y: scroll;
+    max-height: 38vmin;
+    margin-top: 1vmin;
+    display: block;
+
+    &::-webkit-scrollbar {
+        width: 2vmin;
+    }
+    
+    &::-webkit-scrollbar-track {
+        background-color: darkslateblue;
+        box-shadow: inset 0 0 1vmin rgba(0, 0, 0, 0.5);
+        border-radius: 1vmin;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+        background-color: darkgrey;
+        box-shadow: inset 0 0 1vmin rgba(0, 0, 0, 0.5);
+        border-radius: 1vmin;
+    }
+    
+    tr {
+        cursor: pointer;
+        
+        &:hover > td {
+            background: #999;
+        }
+    }
+    
+    td {
+        padding: 1vmin;
+    }
+    
+    td:first-child {
+        width: 100%;
+        text-align: left;
+    }
+    
+    td:nth-child(2) {
+        min-width: 15vmin;
+        text-align: left;
+    }
+    
+    td:last-child {
+        min-width: 15vmin;
+        text-align: right;
+    }
+}
+
+.stars {
+    >svg {
+        width: 3vmin;
+        fill: rgba(0, 0, 0, 0.2);
+    }
+    
+    &.star-1, &.star-2, &.star-3, &.star-4, &.star-5 {
+        >svg:nth-child(5) {
+            fill: yellow;
+        }
+    }
+    
+    &.star-2, &.star-3, &.star-4, &.star-5 {
+        >svg:nth-child(4) {
+            fill: yellow;
+        }
+    }
+    
+    &.star-3, &.star-4, &.star-5 {
+        >svg:nth-child(3) {
+            fill: yellow;
+        }
+    }
+    
+    &.star-4, &.star-5 {
+        >svg:nth-child(2) {
+            fill: yellow;
+        }
+    }
+    
+    &.star-5 {
+        >svg:nth-child(1) {
+            fill: yellow;
+        }
+    }
 }

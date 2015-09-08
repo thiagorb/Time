@@ -8,7 +8,6 @@
     }
 
     export class GameView {
-        renderToken: number;
         stepToken: number;
         countFPSToken: number;
         stepObjects: Array<Steppable> = new Array();
@@ -17,6 +16,9 @@
         private keyboardController: KeyboardController;
         private countFPS = 0;
         private fps = 0;
+        private countSPS = 0;
+        private sps = 0;
+        private running = false;
 
         constructor(canvas: HTMLCanvasElement) {
             window.addEventListener("resize", () => this.resizeCanvas());
@@ -27,6 +29,7 @@
             this.addRenderObject({
                 render: (ctx: CanvasRenderingContext2D) => {
                     ctx.fillText(this.fps.toString(), 10, 10);
+                    ctx.fillText(this.sps.toString(), 10, 25);
                 }
             });
         }
@@ -41,6 +44,7 @@
 
         step() {
             this.stepObjects.forEach(o => o.step());
+            this.countSPS++;
         }
 
         render() {
@@ -49,19 +53,28 @@
             g.clearRect(0, 0, this.canvas.width, this.canvas.height);
             this.renderObjects.forEach(o => o.render(g));
             this.countFPS++;
-            window.requestAnimationFrame(() => this.render());
+            if (this.running) window.requestAnimationFrame(() => this.render());
         }
 
         start(sps) {
-            this.renderToken = window.requestAnimationFrame(() => this.render());
+            this.stop();
+            this.running = true;
+            window.requestAnimationFrame(() => this.render());
             this.stepToken = setInterval(() => this.step(), 1000 / sps);
-            this.countFPSToken = setInterval(() => { this.fps = this.countFPS; this.countFPS = 0 }, 1000);
+            this.countFPSToken = setInterval(() => {
+                this.fps = this.countFPS;
+                this.countFPS = 0;
+                this.sps = this.countSPS;
+                this.countSPS = 0;
+            }, 1000);
         }
 
         stop() {
-            clearInterval(this.renderToken);
-            clearInterval(this.stepToken);
-            clearInterval(this.countFPSToken);
+            if (this.stepToken) clearInterval(this.stepToken);
+            if (this.countFPSToken) clearInterval(this.countFPSToken);
+            this.stepToken = null;
+            this.countFPSToken = null;
+            this.running = false;
         }
 
         addKeyListener(keyCode: number, callback: Function) {

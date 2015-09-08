@@ -1,5 +1,5 @@
 ﻿module Time {
-    var SPS = 30;
+    var SPS = 100;
     var timeSpeed = 1;
     var timeAcceleration = 8 / SPS;
     var time;
@@ -102,7 +102,9 @@
         };
     }
 
-    interface Level {
+    export interface Level {
+        id: number;
+        name: string;
         viewSize: Array<number>;
         roomSize: Array<number>;
         playerStart: Array<number>;
@@ -115,6 +117,7 @@
         private player = new Player();
         private goal = new Goal();
         private obstacles: Array<Obstacle>;
+        public gameOverCallback: () => void;
 
         constructor(canvas: HTMLCanvasElement) {
             super(canvas);
@@ -150,6 +153,7 @@
                     })
                     if (lost) {
                         this.stop();
+                        this.gameOverCallback();
                         return;
                     }
                     
@@ -171,6 +175,8 @@
         setLevel(id: number) {
             viewPosition = [0, 0];
             time = 0;
+            timeSpeed = 0;
+            timeAcceleration = 8 / SPS;
 
             var level = GameView.getLevel(id);
 
@@ -182,10 +188,13 @@
             this.obstacles = level.obstacles;
         }
 
-        private static getLevel(id: number): Level {
+        public static getLevel(id: number): Level {
+            if (id < 10) id = 0;
             switch (id) {
                 case 0:
                     return {
+                        id: id,
+                        name: "Intro",
                         viewSize: [500, 400],
                         roomSize: [1000, 400],
                         playerStart: [20, 200],
@@ -224,5 +233,15 @@
                     }
             }
         }
+    }
+    
+    export function getLevels() : Array<Level> {
+        var i = 0;
+        var level: Level;
+        var levels = new Array<Level>();
+        while (level = GameView.getLevel(i++)) {
+            levels.push(level);
+        }
+        return levels;
     }
 }
