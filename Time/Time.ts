@@ -162,10 +162,11 @@
                     viewPosition[0] = Math.max(0, Math.min(roomSize[0] - viewSize[0], this.player.position[0] - viewSize[0] / 2));
                 }
             });
-
-            canvas.addEventListener("mousedown", () => {
-                timeAcceleration = -timeAcceleration;
-            });
+            
+            canvas.addEventListener(
+                "ontouchend" in document.documentElement? "touchend": "mousedown",
+                () => timeAcceleration = -timeAcceleration
+            );
         }
 
         start() {
