@@ -1,3 +1,5 @@
+@default-font-size: 3vmin;
+@default-line-height: 4vmin;
 body {
     font-family: sans-serif;
     margin: 0;
@@ -5,16 +7,44 @@ body {
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
+    text-shadow: 0 0 1.25vmin black;
 }
 
-@default-font-size: 3vmin;
-@default-line-height: 4vmin;
-* {
-    border: 0;
+body, button {
     color: white;
     font-weight: bolder;
     font-size: @default-font-size;
     line-height: @default-line-height;
+}
+
+p {
+    margin: 2vmin 1vmin;
+}
+
+@scrollable-padding: 1vmin;
+.scrollable {
+    overflow-y: auto;
+    margin: 1vmin 0;
+    padding: @scrollable-padding;
+    box-shadow: inset 0 0 2vmin #444;
+    border-radius: 1vmin;
+    display: block;
+    
+    &::-webkit-scrollbar {
+        width: 2vmin;
+    }
+    
+    &::-webkit-scrollbar-track {
+        background-color: darkslateblue;
+        box-shadow: inset 0 0 1vmin rgba(0, 0, 0, 0.5);
+        border-radius: 1vmin;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+        background-color: darkgrey;
+        box-shadow: inset 0 0 1vmin rgba(0, 0, 0, 0.5);
+        border-radius: 1vmin;
+    }
 }
 
 canvas {
@@ -95,43 +125,20 @@ button {
     line-height: @title-height;
     font-size: 9vmin;
     width: 100%;
-    text-shadow: 0 0 1.25vmin black; 
 }
 
 #menu {
     margin: (@dialog-content-height - (@title-height + @title-margin-bottom + @button-height)) / 2 0;
 }
 
-#level-selection {
-    text-shadow: 0 0 1.25vmin black; 
-}
-
 @levels-list-margin-v: 1vmin;
-@levels-list-padding: 1vmin;
 #levels-list {
-    overflow-y: scroll;
-    max-height: @dialog-content-height - @default-line-height - 2 * @levels-list-margin-v - 2 * @levels-list-padding - @button-height;
+    max-height: @dialog-content-height - @default-line-height - 2 * @levels-list-margin-v - 2 * @scrollable-padding - @button-height;
     margin: @levels-list-margin-v 0;
-    padding: @levels-list-padding;
+    padding: @scrollable-padding;
     box-shadow: inset 0 0 2vmin #444;
     border-radius: 1vmin;
     display: block;
-
-    &::-webkit-scrollbar {
-        width: 2vmin;
-    }
-    
-    &::-webkit-scrollbar-track {
-        background-color: darkslateblue;
-        box-shadow: inset 0 0 1vmin rgba(0, 0, 0, 0.5);
-        border-radius: 1vmin;
-    }
-    
-    &::-webkit-scrollbar-thumb {
-        background-color: darkgrey;
-        box-shadow: inset 0 0 1vmin rgba(0, 0, 0, 0.5);
-        border-radius: 1vmin;
-    }
     
     tr {
         cursor: pointer;
@@ -196,4 +203,11 @@ button {
             fill: yellow;
         }
     }
+}
+
+@help-content-margin-v: 2vmin;
+#help .content {
+    height: @dialog-content-height - @default-line-height - 2 * @help-content-margin-v - 2 * @scrollable-padding - @button-height;
+    margin: @help-content-margin-v 0;
+    text-align: left;
 }

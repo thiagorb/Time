@@ -19,14 +19,24 @@
             <div id="menu" class="active">
                 <div id="title">TIME PONG</div>
                 <button data-goto="level-selection">START</button>
-                <button>HELP</button>
+                <button data-goto="help">HELP</button>
             </div>
             <div id="level-selection">
                 <div>Select a level</div>
-                <table cellspacing="0" id="levels-list">
+                <table cellspacing="0" id="levels-list" class="scrollable">
                     <tbody>
                     </tbody>
                 </table>
+                <button data-goto="menu">MENU</button>
+            </div>
+            <div id="help">
+                <div>TIME PONG</div>
+                <div class="content scrollable">
+                    <p>In this game you don't control you character, but with a single mouse click, or tap on the screen, you can reverse the time.</p>
+                    <p>Actually this is pretty much all you can do.</p>
+                    <p>On each level, you will find obstacles with different shapes, and moving and rotating in differnt forms</p>
+                    <p>Avoid the obstacles and make your character hit the goal. Try to make it in the smallest time possible!</p>
+                </div>
                 <button data-goto="menu">MENU</button>
             </div>
         </div>
