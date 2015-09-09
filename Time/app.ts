@@ -4,6 +4,8 @@
 }
 
 window.onload = () => {
+    var currentLevel;
+    
     function gotoView(viewId: string) {
         var activeView = <HTMLDivElement>document.getElementsByClassName("active")[0];
         var newView = <HTMLDivElement>document.getElementById(viewId);
@@ -51,7 +53,7 @@ window.onload = () => {
             time: time,
             stars: stars
         }));
-        var levelTr = <HTMLTableRowElement>document.querySelector("tr[data-id=" + levelId + "]");
+        var levelTr = <HTMLTableRowElement>document.querySelector("tr[data-id='" + levelId + "']");
         var starsTd = <HTMLTableDataCellElement>levelTr.children[1];
         starsTd.className = "stars star-" + stars;
         
@@ -70,7 +72,10 @@ window.onload = () => {
     
     var gameView = new Time.GameView(<HTMLCanvasElement>document.getElementById("canvas"));
     gameView.start();
-    gameView.gameOverCallback = function () {
+    gameView.gameOverCallback = function (win: boolean, time?: number, stars?: number) {
+        if (win) {
+            registerScore(currentLevel, time, stars)
+        }
         document.getElementById("shadow").style.visibility = "visible";
         document.getElementById("shadow").style.opacity = "1";
     };
@@ -101,6 +106,7 @@ window.onload = () => {
         var id = tr.attributes["data-id"].value;
         document.getElementById("shadow").style.opacity = "0";
         gameView.stop();
+        currentLevel = id;
         setTimeout(function () {
             gameView.setLevel(id);
             gameView.start();

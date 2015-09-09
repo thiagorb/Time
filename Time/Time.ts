@@ -111,13 +111,15 @@
         playerSpeed: Array<number>;
         goalPosition: Array<number>;
         obstacles: Array<Obstacle>;
+        starsPerTime: (time: number) => number;
     }
 
     export class GameView extends Game.GameView {
         private player = new Player();
         private goal = new Goal();
         private obstacles: Array<Obstacle>;
-        public gameOverCallback: () => void;
+        public gameOverCallback: (win: boolean, time?: number, stars?: number) => void;
+        private starsPerTime: (time: number) => number;
 
         constructor(canvas: HTMLCanvasElement) {
             super(canvas);
@@ -153,7 +155,14 @@
                     })
                     if (lost) {
                         this.stop();
-                        this.gameOverCallback();
+                        this.gameOverCallback(false);
+                        return;
+                    }
+                    
+                    if (this.player.transformedPolygon.intersectsWith(this.goal.transformedPolygon)) {
+                        this.stop();
+                        
+                        this.gameOverCallback(true, time, Math.round(this.starsPerTime(time)));
                         return;
                     }
                     
@@ -187,6 +196,7 @@
             this.player.speed = level.playerSpeed;
             this.goal.position = level.goalPosition;
             this.obstacles = level.obstacles;
+            this.starsPerTime = level.starsPerTime;
         }
 
         public static getLevel(levelId: number): Level {
@@ -201,6 +211,10 @@
                         playerStart: [20, 200],
                         playerSpeed: [30 / SPS, 0],
                         goalPosition: [800, 200],
+                        starsPerTime: makeAnimation([
+                            [2, 5],
+                            [10, 1]
+                        ]),
                         obstacles: [
                             new Obstacle(
                                 [
