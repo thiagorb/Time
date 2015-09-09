@@ -80,8 +80,11 @@ window.onload = () => {
         document.getElementById("shadow").style.opacity = "1";
     };
     
-    document.getElementById("btnStart").addEventListener("click", function () {
-        gotoView("level-selection");
+    document.body.addEventListener("click", function (ev: MouseEvent) {
+        var target = <HTMLElement>ev.target;
+        if (target.tagName != "BUTTON") return;
+        var goto = target.attributes.getNamedItem("data-goto").value;
+        if (goto) gotoView(goto);
     });
     
     var levelsTableBody = <HTMLTableSectionElement>document.getElementById("levels-list").children[0];
