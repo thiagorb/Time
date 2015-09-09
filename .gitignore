@@ -1,6 +1,6 @@
+
 *.suo
 Time/bin
-Time/dist
 Time/obj
 Time/dist.tar.gz
 Time/*.js
