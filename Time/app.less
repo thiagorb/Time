@@ -115,7 +115,13 @@ button {
         background-color: #9f5;
     }
     
-    &:focus {outline:0!important;}
+    &:disabled {
+        background-color: #999;
+    }
+    
+    &:focus {
+        outline: 0!important;
+    }
 }
 
 @title-height: 10vmin;
@@ -133,7 +139,7 @@ button {
 
 @levels-list-margin-v: 1vmin;
 #levels-list {
-    max-height: @dialog-content-height - @default-line-height - 2 * @levels-list-margin-v - 2 * @scrollable-padding - @button-height;
+    height: @dialog-content-height - @default-line-height - 2 * @levels-list-margin-v - 2 * @scrollable-padding - @button-height;
     margin: @levels-list-margin-v 0;
     padding: @scrollable-padding;
     box-shadow: inset 0 0 2vmin #444;
@@ -210,4 +216,20 @@ button {
     height: @dialog-content-height - @default-line-height - 2 * @help-content-margin-v - 2 * @scrollable-padding - @button-height;
     margin: @help-content-margin-v 0;
     text-align: left;
+}
+
+@after-game-content-margin-v: 2vmin;
+#after-game{
+    .content {
+        height: @dialog-content-height - @default-line-height - 2 * @after-game-content-margin-v - @button-height;
+        margin: @after-game-content-margin-v 0;
+    }
+    
+    .score {
+        margin: 3vmin 0 -5vmin 0;
+    }
+    
+    .highscore {
+        margin-top: 8vmin;
+    }
 }

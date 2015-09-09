@@ -144,7 +144,6 @@
             this.addStepObject(this.player);
             this.addRenderObject(this.goal);
             this.addStepObject(this.goal);
-            this.setLevel(0);
 
             this.addStepObject({
                 step: () => {
@@ -197,14 +196,59 @@
             this.goal.position = level.goalPosition;
             this.obstacles = level.obstacles;
             this.starsPerTime = level.starsPerTime;
+            
+            return level;
         }
 
-        public static getLevel(levelId: number): Level {
-            var id = levelId < 10? 0: levelId;
+        public static getLevel(id: number): Level {
             switch (id) {
+                case -1:
+                    return {
+                        id: -1,
+                        name: "Demo",
+                        viewSize: [500, 400],
+                        roomSize: [1000, 400],
+                        playerStart: [20, 200],
+                        playerSpeed: [30 / SPS, 0],
+                        goalPosition: [800, 200],
+                        starsPerTime: makeAnimation([
+                            [2, 5],
+                            [10, 1]
+                        ]),
+                        obstacles: [
+                            new Obstacle(
+                                [
+                                    [0, 0],
+                                    [-200, 0],
+                                    [-200, 30],
+                                    [0, 30]
+                                ], 
+                                "#FF00BB",
+                                () => [400, 100],
+                                makeAnimation([
+                                    [2, 0],
+                                    [4, Math.PI / 2]
+                                ])
+                                ),
+                            new Obstacle(
+                                [
+                                    [-30, 0],
+                                    [-30, -200],
+                                    [0, -200],
+                                    [0, 0]
+                                ], 
+                                "#FF00BB",
+                                () => [500, 300],
+                                makeAnimation([
+                                    [2, 0],
+                                    [4, -Math.PI / 2]
+                                ])
+                                )
+                        ]
+                    }
                 case 0:
                     return {
-                        id: levelId,
+                        id: id,
                         name: "Intro",
                         viewSize: [500, 400],
                         roomSize: [1000, 400],
