@@ -20,7 +20,7 @@ window.onload = () => {
     
     function gotoView(viewId: string) {
         (<HTMLDivElement>$("#shadow")).style.visibility = "visible";
-        (<HTMLDivElement>$("#shadow")).style.opacity = "1";
+        (<HTMLDivElement>$("#shadow")).style.opacity = "";
         var activeView = $(".active");
         var newView = $("#" + viewId);
         var dialog = <HTMLDivElement>$("#dialog");
@@ -30,20 +30,29 @@ window.onload = () => {
                 newView.classList.add("active");
                 if (activeView) activeView.classList.remove("active");
                 dialog.style.opacity = "1";
+                dialog.style.visibility = "visible";
             }, 250);
         } else {
             newView.classList.add("active");
             dialog.style.opacity = "1";
+            dialog.style.visibility = "visible";
         }
     }
     
     function hideUi (callback: () => void) {
-        (<HTMLDivElement>$("#shadow")).style.opacity = "0";
+        var shadow = (<HTMLDivElement>$("#shadow"));
+        var dialog = (<HTMLDivElement>$("#dialog"));
+        shadow.style.opacity = "1";
+        dialog.style.opacity = "0";
         setTimeout(function () {
             var activeView = $(".active");
             if (activeView) activeView.classList.remove("active");
+            shadow.style.opacity = "0";
             callback();
-            (<HTMLDivElement>$("#shadow")).style.visibility = "hidden";
+            setTimeout(function () {
+                shadow.style.visibility = "hidden";
+                dialog.style.visibility = "hidden";
+            }, 500);
         }, 500);
     }
     

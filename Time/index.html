@@ -14,51 +14,50 @@
 </head>
 <body>
     <canvas id="canvas"></canvas>
-    <div id="shadow">
-        <div id="dialog">
-            <div id="menu" class="active">
-                <div id="title">TIME PONG</div>
-                <button data-goto="level-selection">START</button>
-                <button data-goto="help">HELP</button>
+    <div id="shadow"></div>
+    <div id="dialog">
+        <div id="menu" class="active">
+            <div id="title">TIME PONG</div>
+            <button data-goto="level-selection">START</button>
+            <button data-goto="help">HELP</button>
+        </div>
+        <div id="level-selection">
+            <div>Select a level</div>
+            <table cellspacing="0" id="levels-list" class="scrollable">
+                <tbody>
+                </tbody>
+            </table>
+            <button data-goto="menu">MENU</button>
+        </div>
+        <div id="help">
+            <div>TIME PONG</div>
+            <div class="content scrollable">
+                <p>In this game you don't control you character, but with a single mouse click, or tap on the screen, you can reverse the time.</p>
+                <p>Actually this is pretty much all you can do.</p>
+                <p>On each level, you will find obstacles with different shapes, and moving and rotating at different speeds.</p>
+                <p>Avoid the obstacles and make your character hit the goal. Try to make it in the smallest time possible!</p>
             </div>
-            <div id="level-selection">
-                <div>Select a level</div>
-                <table cellspacing="0" id="levels-list" class="scrollable">
-                    <tbody>
-                    </tbody>
-                </table>
-                <button data-goto="menu">MENU</button>
-            </div>
-            <div id="help">
-                <div>TIME PONG</div>
-                <div class="content scrollable">
-                    <p>In this game you don't control you character, but with a single mouse click, or tap on the screen, you can reverse the time.</p>
-                    <p>Actually this is pretty much all you can do.</p>
-                    <p>On each level, you will find obstacles with different shapes, and moving and rotating at different speeds.</p>
-                    <p>Avoid the obstacles and make your character hit the goal. Try to make it in the smallest time possible!</p>
+            <button data-goto="menu">MENU</button>
+        </div>
+        <div id="after-game">
+            <div class="level-name"></div>
+            <div class="content">
+                <div class="message"></div>
+                <div class="score">
+                    Your score:
+                    <div class="stars"></div>
+                    <div class="time"></div>
                 </div>
-                <button data-goto="menu">MENU</button>
-            </div>
-            <div id="after-game">
-                <div class="level-name"></div>
-                <div class="content">
-                    <div class="message"></div>
-                    <div class="score">
-                        Your score:
-                        <div class="stars"></div>
-                        <div class="time"></div>
-                    </div>
-                    
-                    <div class="highscore">
-                        Best score:
-                        <div class="stars"></div>
-                        <div class="time"></div>
-                    </div>
+                
+                <div class="highscore">
+                    Best score:
+                    <div class="stars"></div>
+                    <div class="time"></div>
                 </div>
-                <button id="btnReplay">REPLAY</button>
-                <button data-goto="level-selection">SELECT LEVEL</button>
-                <button id="btnNext">NEXT</button>
             </div>
+            <button id="btnReplay">REPLAY</button>
+            <button data-goto="level-selection">SELECT LEVEL</button>
+            <button id="btnNext">NEXT</button>
         </div>
     </div>
 </body>
