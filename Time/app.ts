@@ -14,6 +14,7 @@ window.onload = () => {
     
     var currentLevel: Time.Level;
     var totalLevels;
+    var onGame = false;
     
     var $ = function (query: string): Element { return document.querySelector(query) };
     var $$ = function (query: string): NodeList { return document.querySelectorAll(query) };
@@ -37,23 +38,6 @@ window.onload = () => {
             dialog.style.opacity = "1";
             dialog.style.visibility = "visible";
         }
-    }
-    
-    function hideUi (callback: () => void) {
-        var shadow = (<HTMLDivElement>$("#shadow"));
-        var dialog = (<HTMLDivElement>$("#dialog"));
-        shadow.style.opacity = "1";
-        dialog.style.opacity = "0";
-        setTimeout(function () {
-            var activeView = $(".active");
-            if (activeView) activeView.classList.remove("active");
-            shadow.style.opacity = "0";
-            callback();
-            setTimeout(function () {
-                shadow.style.visibility = "hidden";
-                dialog.style.visibility = "hidden";
-            }, 500);
-        }, 500);
     }
     
     var starsHTML = [0, 0, 0, 0, 0].map(function () {
@@ -110,15 +94,46 @@ window.onload = () => {
     
     function startLevel(id: number) {
         gameView.stop();
-        hideUi(function () {
+        
+        var shadow = (<HTMLDivElement>$("#shadow"));
+        var dialog = (<HTMLDivElement>$("#dialog"));
+        shadow.style.opacity = "1";
+        dialog.style.opacity = "0";
+        setTimeout(function () {
+            var activeView = $(".active");
+            if (activeView) activeView.classList.remove("active");
+            shadow.style.opacity = "0";
+            
             currentLevel = gameView.setLevel(id);
-            gameView.start();
-        });
+            gameView.step();
+            gameView.render();
+            
+            var timeToStart = 3;
+            (<HTMLElement>$("#time-display")).style.visibility = "visible";
+            (<HTMLElement>$("#time-display")).innerHTML = timeToStart.toString();
+            var token = setInterval(function () {
+                (<HTMLElement>$("#time-display")).innerHTML = (--timeToStart).toString();
+                if (!timeToStart) {
+                    clearInterval(token);
+                    gameView.start();
+                    onGame = true;
+                    $("#time-display").classList.add("playing");
+                }
+            }, 1000);
+            
+            setTimeout(function () {
+                shadow.style.visibility = "hidden";
+                dialog.style.visibility = "hidden";
+            }, 500);
+        }, 500);
     }
     
     var gameView = new Time.GameView(<HTMLCanvasElement>$("canvas"));
     gameView.setLevel(-1);
     gameView.start();
+    gameView.addRenderObject({ render: function () {
+        if (onGame) (<HTMLElement>$("#time-display")).innerHTML = Time.getTime().toFixed(2) + "s";
+    }});
     
     gameView.gameOverCallback = function (win: boolean, time: number, stars?: number) {
         if (win) {
@@ -145,6 +160,9 @@ window.onload = () => {
         (<HTMLDivElement>$("#after-game .highscore .stars")).className = "stars star-" + levelData.stars;
         (<HTMLDivElement>$("#after-game .highscore .time")).innerHTML = formatTime(levelData.time);
         
+        onGame = false;
+        (<HTMLElement>$("#time-display")).style.visibility = "";
+        $("#time-display").classList.remove("playing");
         gotoView("after-game");
     };
     

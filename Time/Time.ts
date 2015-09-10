@@ -132,7 +132,6 @@
                     var p = Math.min(px, py);
                     var effectiveViewWidth = viewSize[0] * p;
                     var effectiveViewHeight = viewSize[1] * p;
-                    ctx.fillText(time.toString(), 10, 40);
                     ctx.setTransform(p, 0, 0, p, (this.canvas.width - effectiveViewWidth) / 2, (this.canvas.height - effectiveViewHeight) / 2);
                     ctx.translate(-viewPosition[0], -viewPosition[1]);
                     this.obstacles.forEach(o => o.render(ctx));
@@ -292,6 +291,10 @@
                     }
             }
         }
+    }
+    
+    export function getTime() {
+        return time;
     }
     
     export function getLevels() : Array<Level> {

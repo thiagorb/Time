@@ -17,6 +17,10 @@ body, button {
     line-height: @default-line-height;
 }
 
+div, table {
+    box-sizing: content-box;
+}
+
 p {
     margin: 2vmin 1vmin;
 }
@@ -123,6 +127,10 @@ button {
     &:focus {
         outline: 0!important;
     }
+    
+    &::-moz-focus-inner {
+        border: 0;
+    }
 }
 
 @title-height: 10vmin;
@@ -138,7 +146,7 @@ button {
     margin: (@dialog-content-height - (@title-height + @title-margin-bottom + @button-height)) / 2 0;
 }
 
-@levels-list-margin-v: 1vmin;
+@levels-list-margin-v: 2vmin;
 #levels-list {
     height: @dialog-content-height - @default-line-height - 2 * @levels-list-margin-v - 2 * @scrollable-padding - @button-height;
     margin: @levels-list-margin-v 0;
@@ -233,5 +241,21 @@ button {
     
     .highscore {
         margin-top: 8vmin;
+    }
+}
+
+#time-display {
+    top: 50%;
+    width: 100%;
+    line-height: 0;
+    text-align: center;
+    font-size: 10vmin;
+    position: absolute;
+    transition: top 0.5s, font-size 0.5s;
+    visibility: hidden;
+    
+    &.playing {
+        font-size: 5vmin;
+        top: 5vmin;
     }
 }
