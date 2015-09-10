@@ -4,6 +4,14 @@
 }
 
 window.onload = () => {
+    if (!window.requestAnimationFrame) {
+        window.requestAnimationFrame = 
+            ["webkit", "moz", "o", "ms"].reduce(function (existing, vendor) {
+                return existing || window[vendor + "RequestAnimationFrame"];
+            }, null)
+            || function(callback) { window.setTimeout(callback, 1000 / 60); };
+    }
+    
     var currentLevel: Time.Level;
     var totalLevels;
     
