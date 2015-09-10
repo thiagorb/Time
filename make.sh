@@ -31,5 +31,6 @@ echo dist.tar.gz created. Size: `du -b dist.tar.gz | cut -f1` bytes
 if [ "$1" == "--deploy" ]
 then
     cd "$PROJECTDIR"
+    git push origin :gh-pages
     git subtree push --prefix Time/dist origin gh-pages
 fi
