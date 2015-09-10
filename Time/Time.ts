@@ -75,23 +75,23 @@
     }
 
     class Obstacle extends RenderablePolygon {
-        private calculatePosition: () => Array<number>;
-        private calculateDirection: () => number;
+        private calculatePosition: (number) => Array<number>;
+        private calculateDirection: (number) => number;
 
-        constructor(vertices: Vectorial.Matrix, color: string, calculatePosition: () => Array<number>, calculateDirection: () => number) {
+        constructor(vertices: Vectorial.Matrix, color: string, calculatePosition: (number) => Array<number>, calculateDirection: (number) => number) {
             super(vertices, color);
             this.calculatePosition = calculatePosition;
             this.calculateDirection = calculateDirection;
         }
 
         preStep() {
-            this.position = this.calculatePosition();
-            this.direction = this.calculateDirection();
+            this.position = this.calculatePosition(time);
+            this.direction = this.calculateDirection(time);
         }
     }
 
-    function makeAnimation(times: Array<Array<number>>): () => number {
-        return function () {
+    function makeAnimation(times: Array<Array<number>>): (number) => number {
+        return function (time) {
             for (var i = 0; i < times.length; i++) {
                 if (time > times[i][0]) continue;
                 if (!times[i - 1]) return times[i][1];
@@ -150,7 +150,7 @@
                     
                     var lost = this.obstacles.some(o => {
                         return o.transformedPolygon.intersectsWith(this.player.transformedPolygon);
-                    })
+                    });
                     if (lost) {
                         this.stop();
                         this.gameOverCallback(false);
@@ -289,6 +289,34 @@
                                 )
                         ]
                     }
+                case 1:
+                    return {
+                        id: id,
+                        name: "Gear",
+                        viewSize: [500, 400],
+                        roomSize: [1000, 400],
+                        playerStart: [40, 200],
+                        playerSpeed: [30 / SPS, 0],
+                        goalPosition: [800, 200],
+                        starsPerTime: makeAnimation([
+                            [2, 5],
+                            [10, 1]
+                        ]),
+                        obstacles: [
+                            new Obstacle(
+                                gear(10, 0.12, 0.8, 240), 
+                                "#FF00BB",
+                                t => [520, 420],
+                                t => -Math.PI * 0.06 * t
+                                ),
+                            new Obstacle(
+                                gear(10, 0.075, 0.9, 480), 
+                                "#FF00BB",
+                                t => [520, -250],
+                                t => Math.PI * 0.03 * t
+                                )
+                        ]
+                    }
             }
         }
     }
@@ -305,5 +333,22 @@
             levels.push(level);
         }
         return levels;
+    }
+    
+    function gear(tooth: number, teethWidth: number, teethHeight: number, scale: number) {
+        var vertices = new Array<Array<number>>();
+        for (var i = 0; i < tooth; i++) {
+            var toothDegree = i * (Math.PI * 2 / tooth);
+            var toothDegree90 = i * (Math.PI * 2 / tooth) + Math.PI / 2;
+            var cos = Math.cos(toothDegree);
+            var cos90 = Math.cos(toothDegree90);
+            var sin = Math.sin(toothDegree);
+            var sin90 = Math.sin(toothDegree90);
+            vertices.push([scale * (cos * teethHeight - cos90 * teethWidth), scale * (sin * teethHeight - sin90 * teethWidth)]);
+            vertices.push([scale * (cos - cos90 * teethWidth), scale * (sin - sin90 * teethWidth)]);
+            vertices.push([scale * (cos + cos90 * teethWidth), scale * (sin + sin90 * teethWidth)]);
+            vertices.push([scale * (cos * teethHeight + cos90 * teethWidth), scale * (sin * teethHeight + sin90 * teethWidth)]);
+        }
+        return vertices;
     }
 }
