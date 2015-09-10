@@ -207,7 +207,7 @@
                         name: "Demo",
                         viewSize: [500, 400],
                         roomSize: [1000, 400],
-                        playerStart: [20, 200],
+                        playerStart: [40, 200],
                         playerSpeed: [30 / SPS, 0],
                         goalPosition: [800, 200],
                         starsPerTime: makeAnimation([
@@ -251,7 +251,7 @@
                         name: "Intro",
                         viewSize: [500, 400],
                         roomSize: [1000, 400],
-                        playerStart: [20, 200],
+                        playerStart: [40, 200],
                         playerSpeed: [30 / SPS, 0],
                         goalPosition: [800, 200],
                         starsPerTime: makeAnimation([

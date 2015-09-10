@@ -136,6 +136,8 @@ window.onload = () => {
     }});
     
     gameView.gameOverCallback = function (win: boolean, time: number, stars?: number) {
+        if (!currentLevel) return;
+        
         if (win) {
             registerScore(currentLevel.id, time, stars);
             (<HTMLDivElement>$("#after-game .score .stars")).className = "stars star-" + stars;
