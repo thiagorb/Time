@@ -1,5 +1,5 @@
 ﻿module Time {
-    var SPS = 100;
+    var SPS = 60;
     var timeSpeed = 1;
     var timeAcceleration = 8 / SPS;
     var time;
@@ -50,27 +50,75 @@
 
         constructor() {
             super([
-                [-20, -20],
-                [20, -20],
-                [20, 20],
-                [-20, 20],
-            ], "red");
+                [-10, -20],
+                [10, -20],
+                [20, -10],
+                [20, 10],
+                [10, 20],
+                [-10, 20],
+                [-20, 10],
+                [-20, -10]
+            ], "#F80");
         }
 
         preStep() {
             this.position[0] += this.speed[0];
             this.position[1] += this.speed[1];
         }
+
+        render(ctx: CanvasRenderingContext2D) {
+            super.render(ctx);
+            //ctx.lineTo(this.transformedPolygon.vertices[i][0], this.transformedPolygon.vertices[i][1]);
+            //ctx.moveTo(this.position[0], this.position[1]);
+            ctx.save();
+            ctx.translate(this.position[0] + 8, this.position[1]);
+            ctx.fillStyle = "#FFF";
+            ctx.beginPath();
+            
+            var blinkDelay = 3;
+            var blinkTime = 0.2;
+            var s = 0.1 + Math.abs((time % (2 * blinkTime + blinkDelay)) - blinkTime) / blinkTime;
+            
+            ctx.scale(Math.min(1, s), 1);
+            ctx.arc(0, -7, 3, 0, Math.PI * 2);
+            ctx.arc(0, 7, 3, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        }
     }
 
     class Goal extends RenderablePolygon {
         constructor() {
             super([
-                [-20, -20],
-                [20, -20],
-                [20, 20],
-                [-20, 20],
+                [-10, -20],
+                [10, -20],
+                [20, -10],
+                [20, 10],
+                [10, 20],
+                [-10, 20],
+                [-20, 10],
+                [-20, -10]
             ], "green");
+        }
+
+        render(ctx: CanvasRenderingContext2D) {
+            super.render(ctx);
+            //ctx.lineTo(this.transformedPolygon.vertices[i][0], this.transformedPolygon.vertices[i][1]);
+            //ctx.moveTo(this.position[0], this.position[1]);
+            ctx.save();
+            ctx.translate(this.position[0] - 8, this.position[1]);
+            ctx.fillStyle = "#FFF";
+            ctx.beginPath();
+            
+            var blinkDelay = 5;
+            var blinkTime = 0.2;
+            var s = 0.1 + Math.abs((time % (2 * blinkTime + blinkDelay)) - blinkTime) / blinkTime;
+            
+            ctx.scale(Math.min(1, s), 1);
+            ctx.arc(0, -7, 3, 0, Math.PI * 2);
+            ctx.arc(0, 7, 3, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
         }
     }
 
@@ -134,6 +182,14 @@
                     var effectiveViewHeight = viewSize[1] * p;
                     ctx.setTransform(p, 0, 0, p, (this.canvas.width - effectiveViewWidth) / 2, (this.canvas.height - effectiveViewHeight) / 2);
                     ctx.translate(-viewPosition[0], -viewPosition[1]);
+                    
+                    var gradient = ctx.createRadialGradient(roomSize[0] / 2, roomSize[1] / 2, viewSize[1] / 2, roomSize[0] / 2, roomSize[1] / 2, roomSize[0] / 2);
+                    gradient.addColorStop(0, "#037");
+                    gradient.addColorStop(1, "#111");
+                    
+                    ctx.fillStyle = gradient;
+                    ctx.fillRect(0, 0, roomSize[0], roomSize[1]);
+                    
                     this.obstacles.forEach(o => o.render(ctx));
                 }
             });
@@ -172,7 +228,7 @@
             
             canvas.addEventListener(
                 "ontouchend" in document.documentElement? "touchend": "mousedown",
-                () => timeAcceleration = -timeAcceleration
+                () => this.running && (timeAcceleration = -timeAcceleration)
             );
         }
 
@@ -180,13 +236,11 @@
             super.start(SPS);
         }
 
-        setLevel(id: number) {
+        setLevel(level: Level) {
             viewPosition = [0, 0];
             time = 0;
             timeSpeed = 0;
             timeAcceleration = 8 / SPS;
-
-            var level = GameView.getLevel(id);
 
             viewSize = level.viewSize;
             roomSize = level.roomSize;
@@ -198,127 +252,6 @@
             
             return level;
         }
-
-        public static getLevel(id: number): Level {
-            switch (id) {
-                case -1:
-                    return {
-                        id: -1,
-                        name: "Demo",
-                        viewSize: [500, 400],
-                        roomSize: [1000, 400],
-                        playerStart: [40, 200],
-                        playerSpeed: [30 / SPS, 0],
-                        goalPosition: [800, 200],
-                        starsPerTime: makeAnimation([
-                            [2, 5],
-                            [10, 1]
-                        ]),
-                        obstacles: [
-                            new Obstacle(
-                                [
-                                    [0, 0],
-                                    [-200, 0],
-                                    [-200, 30],
-                                    [0, 30]
-                                ], 
-                                "#FF00BB",
-                                () => [400, 100],
-                                makeAnimation([
-                                    [2, 0],
-                                    [4, Math.PI / 2]
-                                ])
-                                ),
-                            new Obstacle(
-                                [
-                                    [-30, 0],
-                                    [-30, -200],
-                                    [0, -200],
-                                    [0, 0]
-                                ], 
-                                "#FF00BB",
-                                () => [500, 300],
-                                makeAnimation([
-                                    [2, 0],
-                                    [4, -Math.PI / 2]
-                                ])
-                                )
-                        ]
-                    }
-                case 0:
-                    return {
-                        id: id,
-                        name: "Intro",
-                        viewSize: [500, 400],
-                        roomSize: [1000, 400],
-                        playerStart: [40, 200],
-                        playerSpeed: [30 / SPS, 0],
-                        goalPosition: [800, 200],
-                        starsPerTime: makeAnimation([
-                            [2, 5],
-                            [10, 1]
-                        ]),
-                        obstacles: [
-                            new Obstacle(
-                                [
-                                    [0, 0],
-                                    [-200, 0],
-                                    [-200, 30],
-                                    [0, 30]
-                                ], 
-                                "#FF00BB",
-                                () => [400, 100],
-                                makeAnimation([
-                                    [2, 0],
-                                    [4, Math.PI / 2]
-                                ])
-                                ),
-                            new Obstacle(
-                                [
-                                    [-30, 0],
-                                    [-30, -200],
-                                    [0, -200],
-                                    [0, 0]
-                                ], 
-                                "#FF00BB",
-                                () => [500, 300],
-                                makeAnimation([
-                                    [2, 0],
-                                    [4, -Math.PI / 2]
-                                ])
-                                )
-                        ]
-                    }
-                case 1:
-                    return {
-                        id: id,
-                        name: "Gear",
-                        viewSize: [500, 400],
-                        roomSize: [1000, 400],
-                        playerStart: [40, 200],
-                        playerSpeed: [30 / SPS, 0],
-                        goalPosition: [800, 200],
-                        starsPerTime: makeAnimation([
-                            [2, 5],
-                            [10, 1]
-                        ]),
-                        obstacles: [
-                            new Obstacle(
-                                gear(10, 0.12, 0.8, 240), 
-                                "#FF00BB",
-                                t => [520, 420],
-                                t => -Math.PI * 0.06 * t
-                                ),
-                            new Obstacle(
-                                gear(10, 0.075, 0.9, 480), 
-                                "#FF00BB",
-                                t => [520, -250],
-                                t => Math.PI * 0.03 * t
-                                )
-                        ]
-                    }
-            }
-        }
     }
     
     export function getTime() {
@@ -326,16 +259,244 @@
     }
     
     export function getLevels() : Array<Level> {
-        var i = 0;
-        var level: Level;
-        var levels = new Array<Level>();
-        while (level = GameView.getLevel(i++)) {
-            levels.push(level);
-        }
-        return levels;
+        var id = 1;
+        return [{
+            id: id++,
+            name: "Intro",
+            viewSize: [500, 300],
+            roomSize: [500, 300],
+            playerStart: [40, 150],
+            playerSpeed: [30 / SPS, 0],
+            goalPosition: [460, 150],
+            starsPerTime: makeAnimation([
+                [-10, 5],
+                [6, 1]
+            ]),
+            obstacles: [
+                new Obstacle(
+                    rectangle(60, 60, true), 
+                    "#060",
+                    t => {
+                        var y;
+                        if (t < 2) {
+                            y = 50;
+                        } else {
+                            t -= 2;
+                            y = Math.min(150, 50 + 200 * t * t / 2);
+                        }
+                        return [250, y];
+                    },
+                    () => 0
+                    ),
+            ]
+        },
+        {
+            id: id++,
+            name: "Jump",
+            viewSize: [700, 400],
+            roomSize: [700, 400],
+            playerStart: [40, 200],
+            playerSpeed: [30 / SPS, 0],
+            goalPosition: [660, 200],
+            starsPerTime: makeAnimation([
+                [0, 5],
+                [10, 1]
+            ]),
+            obstacles: [
+                new Obstacle(
+                    rectangle(60, 60, true), 
+                    "#600",
+                    t => {
+                        t = t % 5;
+                        var y;
+                        if (t < 2) {
+                            y = 200;
+                        } else {
+                            t -= 2;
+                            y = Math.min(200, 200 - 200 * t + 200 * t * t / 2);
+                        }
+                        return [500, y];
+                    },
+                    () => 0
+                    ),
+                new Obstacle(
+                    rectangle(40, 40, true), 
+                    "#600",
+                    t => {
+                        t = t % 4;
+                        var y;
+                        if (t < 1) {
+                            y = 200;
+                        } else {
+                            t -= 1;
+                            y = Math.min(200, 200 - 200 * t + 200 * t * t / 2);
+                        }
+                        return [300, y];
+                    },
+                    () => 0
+                    ),
+            ]
+        },
+        {
+            id: id++,
+            name: "Doors",
+            viewSize: [500, 400],
+            roomSize: [1000, 400],
+            playerStart: [40, 200],
+            playerSpeed: [30 / SPS, 0],
+            goalPosition: [800, 200],
+            starsPerTime: makeAnimation([
+                [2, 5],
+                [10, 1]
+            ]),
+            obstacles: [
+                new Obstacle(
+                    rectangle(40, 100), 
+                    "#ddd",
+                    () => [390, 0],
+                    () => 0
+                    ),
+                new Obstacle(
+                    rectangle(40, 100), 
+                    "#ddd",
+                    () => [390, 300],
+                    () => 0
+                    ),
+                new Obstacle(
+                    rectangle(40, 100), 
+                    "#ddd",
+                    () => [470, 0],
+                    () => 0
+                    ),
+                new Obstacle(
+                    rectangle(40, 100), 
+                    "#ddd",
+                    () => [470, 300],
+                    () => 0
+                    ),
+                new Obstacle(
+                    rectangle(-200, 20), 
+                    "#950",
+                    () => [400, 100],
+                    makeAnimation([
+                        [2, 0],
+                        [4, Math.PI / 2]
+                    ])
+                    ),
+                new Obstacle(
+                    rectangle(-20, -200), 
+                    "#950",
+                    () => [500, 300],
+                    makeAnimation([
+                        [2, 0],
+                        [4, -Math.PI / 2]
+                    ])
+                    )
+            ]
+        },
+        {
+            id: id++,
+            name: "Gears",
+            viewSize: [500, 400],
+            roomSize: [2000, 400],
+            playerStart: [40, 200],
+            playerSpeed: [30 / SPS, 0],
+            goalPosition: [1800, 200],
+            starsPerTime: makeAnimation([
+                [9, 5],
+                [40, 1]
+            ]),
+            obstacles: [
+                new Obstacle(
+                    gear(10, 0.065, 0.085, 0.9, 480), 
+                    "#999",
+                    t => [400, -255],
+                    t => Math.PI * 0.03 * t
+                    ),
+                new Obstacle(
+                    gear(10, 0.11, 0.12, 0.8, 240), 
+                    "#AAA",
+                    t => [800, 420],
+                    t => -Math.PI * 0.06 * t
+                    ),
+                new Obstacle(
+                    gear(10, 0.11, 0.12, 0.8, 240), 
+                    "#888",
+                    t => [1320, 420],
+                    t => -Math.PI * 0.06 * t
+                    ),
+                new Obstacle(
+                    gear(10, 0.065, 0.085, 0.9, 480), 
+                    "#BBB",
+                    t => [1320, -255],
+                    t => Math.PI * 0.03 * t
+                    )
+            ]
+        }];
     }
     
-    function gear(tooth: number, teethWidth: number, teethHeight: number, scale: number) {
+    export function getLevel(id: number): Level {
+        return getLevels().filter(level => level.id == id).pop();
+    }
+    
+    export function getDemoLevel() : Level {
+        return {
+            id: null,
+            name: "Demo",
+            viewSize: [500, 400],
+            roomSize: [1000, 400],
+            playerStart: [40, 200],
+            playerSpeed: [30 / SPS, 0],
+            goalPosition: [800, 200],
+            starsPerTime: makeAnimation([
+                [2, 5],
+                [10, 1]
+            ]),
+            obstacles: [
+                new Obstacle(
+                    [
+                        [0, 0],
+                        [-200, 0],
+                        [-200, 30],
+                        [0, 30]
+                    ], 
+                    "#FF00BB",
+                    () => [400, 100],
+                    makeAnimation([
+                        [2, 0],
+                        [4, Math.PI / 2]
+                    ])
+                    ),
+                new Obstacle(
+                    [
+                        [-30, 0],
+                        [-30, -200],
+                        [0, -200],
+                        [0, 0]
+                    ], 
+                    "#FF00BB",
+                    () => [500, 300],
+                    makeAnimation([
+                        [2, 0],
+                        [4, -Math.PI / 2]
+                    ])
+                    )
+            ]
+        }
+    }
+    
+    function rectangle(width: number, height: number, center?: boolean) {
+        var halfWidth = center? width / 2 : 0;
+        var halfHeight = center? height / 2 : 0;
+        return [
+            [-halfWidth, -halfHeight],
+            [width - halfWidth, - halfHeight],
+            [width - halfWidth, height - halfHeight],
+            [-halfWidth, height - halfHeight]
+        ];
+    }
+    
+    function gear(tooth: number, teethWidth1: number, teethWidth2: number, teethHeight: number, scale: number) {
         var vertices = new Array<Array<number>>();
         for (var i = 0; i < tooth; i++) {
             var toothDegree = i * (Math.PI * 2 / tooth);
@@ -344,10 +505,10 @@
             var cos90 = Math.cos(toothDegree90);
             var sin = Math.sin(toothDegree);
             var sin90 = Math.sin(toothDegree90);
-            vertices.push([scale * (cos * teethHeight - cos90 * teethWidth), scale * (sin * teethHeight - sin90 * teethWidth)]);
-            vertices.push([scale * (cos - cos90 * teethWidth), scale * (sin - sin90 * teethWidth)]);
-            vertices.push([scale * (cos + cos90 * teethWidth), scale * (sin + sin90 * teethWidth)]);
-            vertices.push([scale * (cos * teethHeight + cos90 * teethWidth), scale * (sin * teethHeight + sin90 * teethWidth)]);
+            vertices.push([scale * (cos * teethHeight - cos90 * teethWidth2), scale * (sin * teethHeight - sin90 * teethWidth2)]);
+            vertices.push([scale * (cos - cos90 * teethWidth1), scale * (sin - sin90 * teethWidth1)]);
+            vertices.push([scale * (cos + cos90 * teethWidth1), scale * (sin + sin90 * teethWidth1)]);
+            vertices.push([scale * (cos * teethHeight + cos90 * teethWidth2), scale * (sin * teethHeight + sin90 * teethWidth2)]);
         }
         return vertices;
     }

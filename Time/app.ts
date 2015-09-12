@@ -104,7 +104,7 @@ window.onload = () => {
             if (activeView) activeView.classList.remove("active");
             shadow.style.opacity = "0";
             
-            currentLevel = gameView.setLevel(id);
+            currentLevel = gameView.setLevel(Time.getLevel(id));
             gameView.step();
             gameView.render();
             
@@ -129,8 +129,7 @@ window.onload = () => {
     }
     
     var gameView = new Time.GameView(<HTMLCanvasElement>$("canvas"));
-    gameView.setLevel(-1);
-    gameView.start();
+    gameView.setLevel(Time.getDemoLevel());
     gameView.addRenderObject({ render: function () {
         if (onGame) (<HTMLElement>$("#time-display")).innerHTML = Time.getTime().toFixed(2) + "s";
     }});
@@ -152,7 +151,7 @@ window.onload = () => {
             : "You lost! Better luck next time!";
         
         
-        if (currentLevel.id + 1 >= totalLevels) {
+        if (currentLevel.id + 1 > totalLevels) {
             $("#btnNext").setAttribute("disabled", "disabled");
         } else {
             $("#btnNext").removeAttribute("disabled");
@@ -212,4 +211,6 @@ window.onload = () => {
         if (!tr) return;
         startLevel(parseInt(tr.getAttribute("data-id")));
     });
+    
+    gameView.start();
 };

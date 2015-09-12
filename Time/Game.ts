@@ -13,17 +13,20 @@
         stepObjects: Array<Steppable> = new Array();
         renderObjects: Array<Renderable> = new Array();
         canvas: HTMLCanvasElement;
+        /*
         private keyboardController: KeyboardController;
+        */
         private countFPS = 0;
         private fps = 0;
         private countSPS = 0;
         private sps = 0;
-        private running = false;
+        public running = false;
 
         constructor(canvas: HTMLCanvasElement) {
             window.addEventListener("resize", () => this.resizeCanvas());
             this.canvas = canvas;
             this.resizeCanvas();
+            /*
             this.keyboardController = new KeyboardController();
             this.addStepObject(this.keyboardController);
             this.addRenderObject({
@@ -32,6 +35,7 @@
                     ctx.fillText(this.sps.toString(), 10, 25);
                 }
             });
+            */
         }
 
         addStepObject(o: Steppable) {
@@ -59,6 +63,7 @@
         start(sps) {
             this.stop();
             this.running = true;
+            this.step();
             window.requestAnimationFrame(() => this.render());
             this.stepToken = setInterval(() => this.step(), 1000 / sps);
             this.countFPSToken = setInterval(() => {
@@ -77,9 +82,11 @@
             this.running = false;
         }
 
+        /*
         addKeyListener(keyCode: number, callback: Function) {
             this.keyboardController.addListener(keyCode, callback);
         }
+        */
 
         resizeCanvas() {
             this.canvas.width = this.canvas.clientWidth;
@@ -87,6 +94,7 @@
         }
     }
 
+    /*
     class KeyboardController implements Steppable {
         pressedKeys: {} = {};
         keyListeners: {} = {};
@@ -123,4 +131,5 @@
         RIGHT = 39,
         DOWN = 40
     };
+    */
 }
