@@ -71,7 +71,11 @@ canvas {
     top: 0;
     background-color: black;
     opacity: 0.25;
-    transition: 0.5s opacity;
+    -webkit-transition: opacity 0.5s;
+    -moz-transition: opacity 0.5s;
+    -ms-transition: opacity 0.5s;
+    -o-transition: opacity 0.5s;
+    transition: opacity 0.5s;
 }
 
 @dialog-width: 80vmin;
@@ -94,7 +98,11 @@ canvas {
     padding: @dialog-padding;
     box-shadow: 0 0 3vmin darkslateblue;
     text-align: center;
-    transition: 0.5s opacity;
+    -webkit-transition: opacity 0.5s;
+    -moz-transition: opacity 0.5s;
+    -ms-transition: opacity 0.5s;
+    -o-transition: opacity 0.5s;
+    transition: opacity 0.5s;
     
     >div {
         display: none;
@@ -251,6 +259,10 @@ button {
     text-align: center;
     font-size: 10vmin;
     position: absolute;
+    -webkit-transition: top 0.5s, font-size 0.5s;
+    -moz-transition: top 0.5s, font-size 0.5s;
+    -ms-transition: top 0.5s, font-size 0.5s;
+    -o-transition: top 0.5s, font-size 0.5s;
     transition: top 0.5s, font-size 0.5s;
     visibility: hidden;
     
