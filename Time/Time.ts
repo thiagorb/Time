@@ -49,16 +49,7 @@
         speed: Array<number>;
 
         constructor() {
-            super([
-                [-10, -20],
-                [10, -20],
-                [20, -10],
-                [20, 10],
-                [10, 20],
-                [-10, 20],
-                [-20, 10],
-                [-20, -10]
-            ], "#F80");
+            super(circle(20, 8), "#F80");
         }
 
         preStep() {
@@ -89,16 +80,7 @@
 
     class Goal extends RenderablePolygon {
         constructor() {
-            super([
-                [-10, -20],
-                [10, -20],
-                [20, -10],
-                [20, 10],
-                [10, 20],
-                [-10, 20],
-                [-20, 10],
-                [-20, -10]
-            ], "green");
+            super(circle(20, 8), "green");
         }
 
         render(ctx: CanvasRenderingContext2D) {
@@ -125,11 +107,13 @@
     class Obstacle extends RenderablePolygon {
         private calculatePosition: (number) => Array<number>;
         private calculateDirection: (number) => number;
+        public collides: boolean;
 
-        constructor(vertices: Vectorial.Matrix, color: string, calculatePosition: (number) => Array<number>, calculateDirection: (number) => number) {
+        constructor(vertices: Vectorial.Matrix, color: string, calculatePosition: (number) => Array<number>, calculateDirection: (number) => number, collides: boolean = true) {
             super(vertices, color);
             this.calculatePosition = calculatePosition;
             this.calculateDirection = calculateDirection;
+            this.collides = collides;
         }
 
         preStep() {
@@ -205,7 +189,7 @@
                     this.obstacles.forEach(o => o.step());
                     
                     var lost = this.obstacles.some(o => {
-                        return o.transformedPolygon.intersectsWith(this.player.transformedPolygon);
+                        return o.collides && o.transformedPolygon.intersectsWith(this.player.transformedPolygon);
                     });
                     if (lost) {
                         this.stop();
@@ -223,10 +207,11 @@
                     timeSpeed = Math.max(-1, Math.min(1, timeSpeed + timeAcceleration));
                     time += timeSpeed / SPS;
                     viewPosition[0] = Math.max(0, Math.min(roomSize[0] - viewSize[0], this.player.position[0] - viewSize[0] / 2));
+                    viewPosition[1] = Math.max(0, Math.min(roomSize[1] - viewSize[1], this.player.position[1] - viewSize[1] / 2));
                 }
             });
             
-            canvas.addEventListener(
+            document.body.addEventListener(
                 "ontouchend" in document.documentElement? "touchend": "mousedown",
                 () => this.running && (timeAcceleration = -timeAcceleration)
             );
@@ -262,7 +247,7 @@
         var id = 1;
         return [{
             id: id++,
-            name: "Intro",
+            name: "Fall",
             viewSize: [500, 300],
             roomSize: [500, 300],
             playerStart: [40, 150],
@@ -354,26 +339,30 @@
                     rectangle(40, 100), 
                     "#ddd",
                     () => [390, 0],
-                    () => 0
-                    ),
+                    () => 0,
+                    false
+                ),
                 new Obstacle(
                     rectangle(40, 100), 
                     "#ddd",
                     () => [390, 300],
-                    () => 0
-                    ),
+                    () => 0,
+                    false
+                ),
                 new Obstacle(
                     rectangle(40, 100), 
                     "#ddd",
                     () => [470, 0],
-                    () => 0
-                    ),
+                    () => 0,
+                    false
+                ),
                 new Obstacle(
                     rectangle(40, 100), 
                     "#ddd",
                     () => [470, 300],
-                    () => 0
-                    ),
+                    () => 0,
+                    false
+                ),
                 new Obstacle(
                     rectangle(-200, 20), 
                     "#950",
@@ -382,7 +371,7 @@
                         [2, 0],
                         [4, Math.PI / 2]
                     ])
-                    ),
+                ),
                 new Obstacle(
                     rectangle(-20, -200), 
                     "#950",
@@ -391,7 +380,36 @@
                         [2, 0],
                         [4, -Math.PI / 2]
                     ])
-                    )
+                )
+            ]
+        },
+        {
+            id: id++,
+            name: "Pendulum",
+            viewSize: [500, 400],
+            roomSize: [1000, 400],
+            playerStart: [40, 200],
+            playerSpeed: [30 / SPS, 0],
+            goalPosition: [960, 200],
+            starsPerTime: makeAnimation([
+                [-7, 5],
+                [10, 1]
+            ]),
+            obstacles: [
+                new Obstacle(
+                    Vectorial.Matrix.multiply(rectangle(10, 400), Vectorial.Matrix.translate(-5, 0)),
+                    "#999",
+                    () => [500, -100],
+                    () => Math.cos(time),
+                    false
+                ),
+                new Obstacle(
+                    Vectorial.Matrix.multiply(circle(30, 15), Vectorial.Matrix.translate(0, 400)),
+                    "#dd0",
+                    () => [500, -100],
+                    () => Math.cos(time),
+                    true
+                )
             ]
         },
         {
@@ -408,30 +426,226 @@
             ]),
             obstacles: [
                 new Obstacle(
-                    gear(10, 0.065, 0.085, 0.9, 480), 
+                    gear(12, 0.065, 0.085, 0.9, 480), 
                     "#999",
                     t => [400, -255],
                     t => Math.PI * 0.03 * t
-                    ),
+                ),
                 new Obstacle(
                     gear(10, 0.11, 0.12, 0.8, 240), 
                     "#AAA",
                     t => [800, 420],
                     t => -Math.PI * 0.06 * t
-                    ),
+                ),
                 new Obstacle(
                     gear(10, 0.11, 0.12, 0.8, 240), 
                     "#888",
                     t => [1320, 420],
                     t => -Math.PI * 0.06 * t
-                    ),
+                ),
                 new Obstacle(
                     gear(10, 0.065, 0.085, 0.9, 480), 
                     "#BBB",
                     t => [1320, -255],
                     t => Math.PI * 0.03 * t
-                    )
+                )
             ]
+        },,
+        {
+            id: id++,
+            name: "Highway Crossing",
+            viewSize: [500, 400],
+            roomSize: [900, 800],
+            playerStart: [40, 400],
+            playerSpeed: [30 / SPS, 0],
+            goalPosition: [860, 400],
+            starsPerTime: makeAnimation([
+                [-20, 5],
+                [20, 1]
+            ]),
+            obstacles: [
+                new Obstacle(
+                    rectangle(600, 670), 
+                    "#666",
+                    t => [180, 0],
+                    t => 0,
+                    false
+                ),
+                
+                
+                
+                
+                new Obstacle(
+                    rectangle(50, 100), 
+                    "#77d",
+                    t => [200, t * 150 % 1500],
+                    t => 0
+                ),
+                new Obstacle(
+                    rectangle(50, 100), 
+                    "#0dd",
+                    t => [200, (t + 200) * 150 % 1500],
+                    t => 0
+                ),
+                new Obstacle(
+                    rectangle(50, 100), 
+                    "#008",
+                    t => [200, (t + 1200) * 150 % 1500],
+                    t => 0
+                ),
+                
+                
+                
+                
+                
+                
+                new Obstacle(
+                    rectangle(50, 100), 
+                    "#d00",
+                    t => [300, t * 200 % 1500],
+                    t => 0
+                ),
+                new Obstacle(
+                    rectangle(50, 100), 
+                    "#d0d",
+                    t => [300, (t + 470) * 200 % 1500],
+                    t => 0
+                ),
+                new Obstacle(
+                    rectangle(50, 100), 
+                    "#d70",
+                    t => [300, (t + 890) * 200 % 1500],
+                    t => 0
+                ),
+                
+                
+                
+                new Obstacle(
+                    rectangle(50, 100), 
+                    "#07d",
+                    t => [400, t * 220 % 1500],
+                    t => 0
+                ),
+                new Obstacle(
+                    rectangle(50, 100), 
+                    "#0d0",
+                    t => [400, (t + 660) * 220 % 1500],
+                    t => 0
+                ),
+                new Obstacle(
+                    rectangle(50, 100), 
+                    "#d77",
+                    t => [400, (t + 890) * 220 % 1500],
+                    t => 0
+                ),
+                
+                
+                
+                
+                
+                
+                new Obstacle(
+                    rectangle(50, 100), 
+                    "#00d",
+                    t => [500, 1500 - (t + 40) * 220 % 1500],
+                    t => 0
+                ),
+                new Obstacle(
+                    rectangle(50, 100), 
+                    "#d77",
+                    t => [500, 1500 - (t + 100) * 220 % 1500],
+                    t => 0
+                ),
+                new Obstacle(
+                    rectangle(50, 100), 
+                    "#d7d",
+                    t => [500, 1500 - (t + 150) * 220 % 1500],
+                    t => 0
+                ),
+                
+                
+                
+                
+                
+                
+                new Obstacle(
+                    rectangle(50, 100), 
+                    "#dd0",
+                    t => [600, 1800 - (t + 5) * 200 % 1800],
+                    t => 0
+                ),
+                new Obstacle(
+                    rectangle(50, 100), 
+                    "#df0",
+                    t => [600, 1800 - (t + 10) * 200 % 1800],
+                    t => 0
+                ),
+                new Obstacle(
+                    rectangle(50, 100), 
+                    "#707",
+                    t => [600, 1800 - (t + 25) * 200 % 1800],
+                    t => 0
+                ),
+                
+                
+                
+                
+                
+                new Obstacle(
+                    rectangle(50, 100), 
+                    "#ddd",
+                    t => [700, 1800 - (t + 5) * 150 % 1800],
+                    t => 0
+                ),
+                new Obstacle(
+                    rectangle(50, 100), 
+                    "#d70",
+                    t => [700, 1800 - (t + 10) * 150 % 1800],
+                    t => 0
+                ),
+                new Obstacle(
+                    rectangle(50, 100), 
+                    "#d00",
+                    t => [700, 1800 - (t + 35) * 150 % 1800],
+                    t => 0
+                ),
+            ]
+        },
+        {
+            id: id++,
+            name: "Solar System",
+            viewSize: [900, 900],
+            roomSize: [3000, 3000],
+            playerStart: [40, 1500],
+            playerSpeed: [30 / SPS, 0],
+            goalPosition: [2960, 1500],
+            starsPerTime: makeAnimation([
+                [-30, 5],
+                [40, 1]
+            ]),
+            obstacles: [
+                { radius: 24, color: "#8d888e", orbitRadius: 58 },
+                { radius: 60, color: "#c7c3ba", orbitRadius: 108 },
+                { radius: 64, color: "#365470", orbitRadius: 150 },
+                { radius: 34, color: "#df8d52", orbitRadius: 228 },
+                { radius: 714, color: "#dbb292", orbitRadius: 778 },
+                { radius: 602, color: "#d2c286", orbitRadius: 1430 },
+                { radius: 255, color: "#b9dfe2", orbitRadius: 2870 },
+                { radius: 247, color: "#3d5ff6", orbitRadius: 4500 },
+                { radius: 11, color: "#e6bd97", orbitRadius: 5900 }
+            ].map(function (planet) {
+                var transformedOrbit = 10 * Math.sqrt(planet.orbitRadius);
+                var transformedRadius = 30 + 8 * Math.sqrt(planet.radius);
+                return new Obstacle(
+                    circle(0.1 * transformedRadius, 10),
+                    planet.color,
+                    t => [
+                        1500 + transformedOrbit * Math.cos(100 * (t + 300) / transformedOrbit), 
+                        1500 + transformedOrbit * Math.sin(100 * (t + 300) / transformedOrbit)
+                    ],
+                    () => 0
+                )
+            })
         }];
     }
     
@@ -489,10 +703,10 @@
         var halfWidth = center? width / 2 : 0;
         var halfHeight = center? height / 2 : 0;
         return [
-            [-halfWidth, -halfHeight],
-            [width - halfWidth, - halfHeight],
-            [width - halfWidth, height - halfHeight],
-            [-halfWidth, height - halfHeight]
+            [-halfWidth, -halfHeight, 1],
+            [width - halfWidth, - halfHeight, 1],
+            [width - halfWidth, height - halfHeight, 1],
+            [-halfWidth, height - halfHeight, 1]
         ];
     }
     
@@ -509,6 +723,14 @@
             vertices.push([scale * (cos - cos90 * teethWidth1), scale * (sin - sin90 * teethWidth1)]);
             vertices.push([scale * (cos + cos90 * teethWidth1), scale * (sin + sin90 * teethWidth1)]);
             vertices.push([scale * (cos * teethHeight + cos90 * teethWidth2), scale * (sin * teethHeight + sin90 * teethWidth2)]);
+        }
+        return vertices;
+    }
+    
+    function circle(radius: number, steps: number) {
+        var vertices = [];
+        for (var i = 0; i < steps; i++) {
+            vertices.push([Math.cos(Math.PI * 2 * i / steps) * radius, Math.sin(Math.PI * 2 * i / steps) * radius, 1]);
         }
         return vertices;
     }
