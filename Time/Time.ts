@@ -387,10 +387,10 @@
             id: id++,
             name: "Pendulum",
             viewSize: [500, 400],
-            roomSize: [1000, 400],
-            playerStart: [40, 200],
+            roomSize: [1000, 600],
+            playerStart: [40, 300],
             playerSpeed: [30 / SPS, 0],
-            goalPosition: [960, 200],
+            goalPosition: [960, 300],
             starsPerTime: makeAnimation([
                 [-7, 5],
                 [10, 1]
@@ -399,14 +399,14 @@
                 new Obstacle(
                     Vectorial.Matrix.multiply(rectangle(10, 400), Vectorial.Matrix.translate(-5, 0)),
                     "#999",
-                    () => [500, -100],
+                    () => [500, 0],
                     () => Math.cos(time),
                     false
                 ),
                 new Obstacle(
                     Vectorial.Matrix.multiply(circle(30, 15), Vectorial.Matrix.translate(0, 400)),
                     "#dd0",
-                    () => [500, -100],
+                    () => [500, 0],
                     () => Math.cos(time),
                     true
                 )
@@ -416,10 +416,10 @@
             id: id++,
             name: "Gears",
             viewSize: [500, 400],
-            roomSize: [2000, 400],
-            playerStart: [40, 200],
+            roomSize: [2000, 1000],
+            playerStart: [40, 500],
             playerSpeed: [30 / SPS, 0],
-            goalPosition: [1800, 200],
+            goalPosition: [1800, 500],
             starsPerTime: makeAnimation([
                 [9, 5],
                 [40, 1]
@@ -428,25 +428,25 @@
                 new Obstacle(
                     gear(12, 0.065, 0.085, 0.9, 480), 
                     "#999",
-                    t => [400, -255],
+                    t => [400, 45],
                     t => Math.PI * 0.03 * t
                 ),
                 new Obstacle(
                     gear(10, 0.11, 0.12, 0.8, 240), 
                     "#AAA",
-                    t => [800, 420],
+                    t => [800, 720],
                     t => -Math.PI * 0.06 * t
                 ),
                 new Obstacle(
                     gear(10, 0.11, 0.12, 0.8, 240), 
                     "#888",
-                    t => [1320, 420],
+                    t => [1320, 720],
                     t => -Math.PI * 0.06 * t
                 ),
                 new Obstacle(
                     gear(10, 0.065, 0.085, 0.9, 480), 
                     "#BBB",
-                    t => [1320, -255],
+                    t => [1320, 45],
                     t => Math.PI * 0.03 * t
                 )
             ]
@@ -455,17 +455,17 @@
             id: id++,
             name: "Highway Crossing",
             viewSize: [500, 400],
-            roomSize: [900, 800],
-            playerStart: [40, 400],
+            roomSize: [900, 1200],
+            playerStart: [40, 600],
             playerSpeed: [30 / SPS, 0],
-            goalPosition: [860, 400],
+            goalPosition: [860, 600],
             starsPerTime: makeAnimation([
                 [-20, 5],
                 [20, 1]
             ]),
             obstacles: [
                 new Obstacle(
-                    rectangle(600, 670), 
+                    rectangle(590, 1200), 
                     "#666",
                     t => [180, 0],
                     t => 0,
