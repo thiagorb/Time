@@ -213,7 +213,7 @@
             
             document.body.addEventListener(
                 "ontouchend" in document.documentElement? "touchend": "mousedown",
-                () => this.running && (timeAcceleration = -timeAcceleration)
+                (ev) => (<HTMLElement>ev.target).tagName == "CANVAS" && this.running && (timeAcceleration = -timeAcceleration)
             );
         }
 
@@ -450,7 +450,7 @@
                     t => Math.PI * 0.03 * t
                 )
             ]
-        },,
+        },
         {
             id: id++,
             name: "Highway Crossing",
@@ -658,43 +658,40 @@
             id: null,
             name: "Demo",
             viewSize: [500, 400],
-            roomSize: [1000, 400],
-            playerStart: [40, 200],
-            playerSpeed: [30 / SPS, 0],
-            goalPosition: [800, 200],
-            starsPerTime: makeAnimation([
-                [2, 5],
-                [10, 1]
-            ]),
+            roomSize: [1000, 1000],
+            playerStart: [500, 500],
+            playerSpeed: [0, 0],
+            goalPosition: [-1000, 500],
+            starsPerTime: null,
             obstacles: [
                 new Obstacle(
-                    [
-                        [0, 0],
-                        [-200, 0],
-                        [-200, 30],
-                        [0, 30]
-                    ], 
-                    "#FF00BB",
-                    () => [400, 100],
-                    makeAnimation([
-                        [2, 0],
-                        [4, Math.PI / 2]
-                    ])
-                    ),
+                    Vectorial.Matrix.multiply(rectangle(10, 400), Vectorial.Matrix.translate(-5, 0)),
+                    "#999",
+                    () => [0, 200],
+                    () => Math.cos(time),
+                    false
+                ),
                 new Obstacle(
-                    [
-                        [-30, 0],
-                        [-30, -200],
-                        [0, -200],
-                        [0, 0]
-                    ], 
-                    "#FF00BB",
-                    () => [500, 300],
-                    makeAnimation([
-                        [2, 0],
-                        [4, -Math.PI / 2]
-                    ])
-                    )
+                    Vectorial.Matrix.multiply(circle(30, 15), Vectorial.Matrix.translate(0, 400)),
+                    "#dd0",
+                    () => [0, 200],
+                    () => Math.cos(time),
+                    false
+                ),
+                new Obstacle(
+                    gear(12, 0.065, 0.085, 0.9, 480), 
+                    "#999",
+                    t => [800, -10],
+                    t => Math.PI * 0.03 * t,
+                    false
+                ),
+                new Obstacle(
+                    gear(10, 0.11, 0.12, 0.8, 240), 
+                    "#AAA",
+                    t => [400, 770],
+                    t => -Math.PI * 0.06 * t,
+                    false
+                ),
             ]
         }
     }
